@@ -1,0 +1,6 @@
+*.json
+*.pyc
+*.log
+*.aux
+*.out
+*.synctex*
