@@ -1,5 +1,8 @@
-# DICYRT
-Data Intensive Project Project on Yelp Reviews and Tips.
+# Restaurant and food discovery using Yelp business reviews and Google Places reviews and Visualization using word cloud.
+Data Intensive Project Project on Yelp Reviews and Tips ()DICYRT).
+
+The core idea is to find food and
+restaurants based on Yelp reviews and Google Places reviews.
 
 ##Team Members 
 1. Amruta Shintre
@@ -9,8 +12,5 @@ Data Intensive Project Project on Yelp Reviews and Tips.
 
 
 ###Goals
-1. Display Word Cloud for food items famous at a particular restaurant based on Apache Spark Analysis on reviews for a business.
-2. Display restaurants famous for a particular food item at particular location.
-
-
-
+1.Create a food-based word cloud for a specific restaurant based on offline data obtained from Yelp and data streamed from Google Places reviews.
+2.Search for a restaurant based on a particular food and location.

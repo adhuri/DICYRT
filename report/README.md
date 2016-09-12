@@ -8,4 +8,8 @@ Data Intensive Project Project on Yelp Reviews and Tips.
 4. Amruta Shintre
 
 ###Paper
-Report_DICYRT.tex
+Use include <newfile.tex> if necessary 
+
+Compile Report_DICYRT.tex using Tex Editor.
+
+Apart from PDF and tex all files are added to .gitignore
