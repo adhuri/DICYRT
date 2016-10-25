@@ -8,7 +8,7 @@ words = None
 
 def main():
     global sc, words
-    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname'])
+    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0")
     sc = SparkContext(conf=conf)
     #ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
     #ssc.checkpoint("checkpoint")
@@ -26,7 +26,7 @@ def load_wordlist(filename):
     This function should return a list or set of words from the given filename.
     """
     # YOUR CODE HERE
-    text = sc.textFile(filename)
+    text = sc.textFile(filename,4)
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 
@@ -35,7 +35,7 @@ def load_reviews(filename):
     This function should return a list or set of words from the given filename.
     """
     # YOUR CODE HERE
-    text = sc.textFile(filename)
+    text = sc.textFile(filename,4)
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 
@@ -68,7 +68,7 @@ def review_analyse(words, reviews):
     tweets_words = unique.flatMap(lambda word: word.split(" "))
 
     #import code;code.interact(local=locals())
-    print unique.collect()
+    #print unique.collect()
     sentiment = tweets_words.map(checkWord)
 
     sentiment = sentiment.reduceByKey(lambda x, y : (int(x) + int(y)))

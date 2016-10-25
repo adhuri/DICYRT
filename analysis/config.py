@@ -1,5 +1,5 @@
 spark = dict(
-    server = 'local[2]',
+    server = 'spark://bn20-119.dcs.mcnc.org:7077',
     appname = 'YelpAnalyser'
     )
 
