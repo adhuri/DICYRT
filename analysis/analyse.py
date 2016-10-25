@@ -1,25 +1,28 @@
 from pyspark import SparkConf, SparkContext
 import re
+
+import config
+
 sc = None
 words = None
 
 def main():
     global sc, words
-    conf = SparkConf().setMaster("local[2]").setAppName("Streamer")
+    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname'])
     sc = SparkContext(conf=conf)
     #ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
     #ssc.checkpoint("checkpoint")
 
-    words = load_wordlist("foodDict.txt")
-    reviews = load_reviews("/home/adhuri/DICYRT/data/yelp_academic_dataset_review_part.json")
-    
+    words = load_wordlist(config.foodlist)
+    reviews = load_reviews(config.reviewlist)
+
     #import code;code.interact(local=locals())
-    sentiment = stream(words, reviews)
+    sentiment = review_analyse(words, reviews)
     print sentiment.collect()
 
 
 def load_wordlist(filename):
-    """ 
+    """
     This function should return a list or set of words from the given filename.
     """
     # YOUR CODE HERE
@@ -28,7 +31,7 @@ def load_wordlist(filename):
     return words.collect()
 
 def load_reviews(filename):
-    """ 
+    """
     This function should return a list or set of words from the given filename.
     """
     # YOUR CODE HERE
@@ -54,15 +57,10 @@ def updateFunction(newValues, runningCount):
        runningCount = 0
     return sum(newValues, runningCount)
 
-def stream(words, reviews):
-    
+def review_analyse(words, reviews):
 
-    # Each element of tweets will be the text of a tweet.
-    # You need to find the count of all the positive and negative words in these tweets.
-    # Keep track of a running total counts and print this at every time step (use the pprint function).
-    # YOUR CODE HERE
     reviews = sc.parallelize(reviews)
-    
+
     tweets_filtered = reviews.map(filterSpecChars)
 
     unique = reviews.map(uniqueWords)
@@ -83,7 +81,7 @@ def stream(words, reviews):
     #   [[("positive", 100), ("negative", 50)], [("positive", 80), ("negative", 60)], ...]
     return sentiment
     # counts = []
-    
+
     # sentiment.foreachRDD(lambda t, rdd: counts.append(rdd.collect()))
 
     # sentiment = sentiment.updateStateByKey(updateFunction)
