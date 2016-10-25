@@ -11,12 +11,23 @@ def main():
     #ssc.checkpoint("checkpoint")
 
     words = load_wordlist("foodDict.txt")
-    reviews = load_wordlist("reviews.txt")
+    reviews = load_reviews("/home/adhuri/DICYRT/data/yelp_academic_dataset_review_part.json")
+    
+    #import code;code.interact(local=locals())
     sentiment = stream(words, reviews)
     print sentiment.collect()
 
 
 def load_wordlist(filename):
+    """ 
+    This function should return a list or set of words from the given filename.
+    """
+    # YOUR CODE HERE
+    text = sc.textFile(filename)
+    words = text.flatMap(lambda word: word.split("\n"))
+    return words.collect()
+
+def load_reviews(filename):
     """ 
     This function should return a list or set of words from the given filename.
     """
@@ -35,6 +46,9 @@ def checkWord(word):
     else:
     	return ("none", 1)
 
+def uniqueWords(review):
+    return ' '.join(list(set(review.split(" "))))
+
 def updateFunction(newValues, runningCount):
     if runningCount is None:
        runningCount = 0
@@ -51,10 +65,12 @@ def stream(words, reviews):
     
     tweets_filtered = reviews.map(filterSpecChars)
 
-    tweets_words = tweets_filtered.flatMap(lambda word: word.split(" "))
+    unique = reviews.map(uniqueWords)
+
+    tweets_words = unique.flatMap(lambda word: word.split(" "))
 
     #import code;code.interact(local=locals())
-
+    print unique.collect()
     sentiment = tweets_words.map(checkWord)
 
     sentiment = sentiment.reduceByKey(lambda x, y : (int(x) + int(y)))
