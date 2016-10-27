@@ -1,6 +1,6 @@
 from pyspark import SparkConf, SparkContext
 import re
-
+import json
 import config
 
 sc = None
@@ -8,7 +8,7 @@ words = None
 
 def main():
     global sc, words
-    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0")
+    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","3600")
     sc = SparkContext(conf=conf)
     #ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
     #ssc.checkpoint("checkpoint")
@@ -26,7 +26,7 @@ def load_wordlist(filename):
     This function should return a list or set of words from the given filename.
     """
     # YOUR CODE HERE
-    text = sc.textFile(filename,4)
+    text = sc.textFile(filename,4) 
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 
@@ -36,6 +36,7 @@ def load_reviews(filename):
     """
     # YOUR CODE HERE
     text = sc.textFile(filename,4)
+    print text.collect()[0]
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 

@@ -5,3 +5,4 @@ spark = dict(
 
 foodlist='foodDict.txt'
 reviewlist='/home/adhuri/DICYRT/data/yelp_academic_dataset_review_part.json'
+#reviewlist='/home/adhuri/DICYRT/data/yelp_academic_dataset_review.json'
