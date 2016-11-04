@@ -47,8 +47,8 @@ def main():
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
     reviews.cache()
-    businessid_food_count = reviews.flatMap(extract_food_items).distinct().map(lambda word: (word,1)).reduceByKey(lambda a,b : a + b).map(create_three_tuples)
-    #print businessid_food_count.collect()[0]
+    businessid_food_count = reviews.flatMap(extract_food_items).map(lambda word: (word,1)).reduceByKey(lambda a,b : a + b).map(create_three_tuples)
+    #print businessid_food_count.collect()
     
 
 def filterSpecChars(inp):
