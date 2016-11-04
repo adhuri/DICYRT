@@ -33,9 +33,9 @@ def parse_json(review):
 
 
 # returns a tuple (business id, food item, count)
-def create_three_tuples(data):
+def create_tuple(data):
     arr = data[0].split(" ");
-    return (arr[0], arr[1], data[1])
+    return {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
 
 
 def main():
@@ -47,8 +47,8 @@ def main():
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
     reviews.cache()
-    businessid_food_count = reviews.flatMap(extract_food_items).map(lambda word: (word,1)).reduceByKey(lambda a,b : a + b).map(create_three_tuples)
-    #print businessid_food_count.collect()
+    businessid_food_count = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple)
+    print businessid_food_count.collect()[0:10]
     
 
 def filterSpecChars(inp):
