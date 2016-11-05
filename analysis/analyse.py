@@ -38,17 +38,24 @@ def create_tuple(data):
     return {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
 
 
+def save_in_db(element):
+    print element
+
+
 def main():
     global sc, words
-    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    #conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    #conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
     sc = SparkContext(conf=conf)
     words = load_wordlist(config.foodlist)
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
     reviews.cache()
-    businessid_food_count = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple)
-    print businessid_food_count.collect()[0:10]
+    businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
+                                 .map(create_tuple).collect()
+    #print businessid_food_count.collect()[0:10]
+    for element in businessid_food_count_list:
+        save_in_db(element)
     
 
 def filterSpecChars(inp):
