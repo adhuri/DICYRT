@@ -17,10 +17,10 @@ def create_list_for_kafka(business_id,name,location):
 	return lists
 
 
-def main():
+def main(business_id, restaurant_name, location):
 	try:
 		producer = KafkaProducer(bootstrap_servers='152.46.16.173:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-		for i in create_list_for_kafka('ASidDajshf','RockysLounge','40.3964688,-80.0849416'):
+		for i in create_list_for_kafka(business_id, restaurant_name, location):
 			print ("Sending :", i)
 			producer.send('google_places', i)
 			print ("\nSent")
@@ -29,4 +29,4 @@ def main():
 		print ("Exception in sending to Kafka \n Check if Kafka Cluster working")
 
 if __name__=="__main__":
-	main()
+	main('ASidDajshf','RockysLounge','40.3964688,-80.0849416')

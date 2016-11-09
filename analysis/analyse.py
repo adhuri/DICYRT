@@ -2,6 +2,7 @@ from pyspark import SparkConf, SparkContext
 import re
 import json
 import config
+import db
 
 sc = None
 words = None
@@ -35,11 +36,9 @@ def parse_json(review):
 # returns a tuple (business id, food item, count)
 def create_tuple(data):
     arr = data[0].split(" ");
-    return {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
-
-
-def save_in_db(element):
-    print element
+    element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
+    db.save_element_in_db(element)
+    return element
 
 
 def main():
@@ -54,9 +53,9 @@ def main():
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
                                  .map(create_tuple).collect()
     #print businessid_food_count.collect()[0:10]
-    for element in businessid_food_count_list:
-        save_in_db(element)
-    
+    #for element in businessid_food_count_list:
+    #save_in_db(element)
+    #db.save_in_db(businessid_food_count_list)
 
 def filterSpecChars(inp):
         #Following approach is inspired from a StackOverflow post
