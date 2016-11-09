@@ -36,7 +36,7 @@ def load_reviews(filename):
     """
     # YOUR CODE HERE
     text = sc.textFile(filename,4)
-    print text.collect()[0]
+    #print text.collect()[0]
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 

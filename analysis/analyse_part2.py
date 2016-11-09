@@ -5,22 +5,24 @@ import config
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
+ssc =None
 sc = None
 words = None
 
 def main():
-    global sc, words
+    global sc, words,ssc
     conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","3600")
     sc = SparkContext(conf=conf)
     ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
-    ssc.checkpoint("checkpoint")
+    #ssc.checkpoint("checkpoint")
 
     words = load_wordlist(config.foodlist)
     reviews = load_reviews(config.reviewlist)
 
     #import code;code.interact(local=locals())
-    sentiment = stream(ssc, words, reviews)
-    print sentiment.collect()
+    #sentiment = stream(ssc, words, reviews)
+    stream(ssc, words, reviews)
+    #sentiment.pprint()
 
 
 def load_wordlist(filename):
@@ -38,7 +40,7 @@ def load_reviews(filename):
     """
     # YOUR CODE HERE
     text = sc.textFile(filename,4)
-    print text.collect()[0]
+    #print text.collect()[0]
     words = text.flatMap(lambda word: word.split("\n"))
     return words.collect()
 
@@ -60,18 +62,18 @@ def updateFunction(newValues, runningCount):
        runningCount = 0
     return sum(newValues, runningCount)
 
-def stream(scc,words, reviews):
+def stream(ssc,words, reviews):
 
     kstream = KafkaUtils.createDirectStream(
         ssc, topics = ['google_places'], kafkaParams = {"metadata.broker.list": '152.46.16.173:9092'})
     tweets = kstream.map(lambda x: x[1].encode("ascii","ignore"))
+    print  tweets
+    #reviews = sc.parallelize(tweets)
 
-    print tweets.collect()
-    reviews = sc.parallelize(tweets)
+    #print reviews.collect()
+    tweets_filtered = tweets.map(filterSpecChars)
 
-    tweets_filtered = reviews.map(filterSpecChars)
-
-    unique = reviews.map(uniqueWords)
+    unique = tweets_filtered.map(uniqueWords)
 
     tweets_words = unique.flatMap(lambda word: word.split(" "))
 
@@ -87,14 +89,14 @@ def stream(scc,words, reviews):
     # You will need to use the foreachRDD function.
     # For our implementation, counts looked like:
     #   [[("positive", 100), ("negative", 50)], [("positive", 80), ("negative", 60)], ...]
-    return sentiment
+    #return sentiment
     # counts = []
 
     # sentiment.foreachRDD(lambda t, rdd: counts.append(rdd.collect()))
 
     # sentiment = sentiment.updateStateByKey(updateFunction)
 
-    # sentiment.pprint()
+    sentiment.pprint()
 
     # return counts
 
