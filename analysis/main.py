@@ -1,5 +1,6 @@
 import config
 import sys
+import cass
 
 def getFoodlist():
     lines=[]
@@ -8,15 +9,21 @@ def getFoodlist():
     return lines
 
 def search_query_1(food,location):
-    print "\n===Query results 1 for food : ",food," and location : ",location,"==\n"
+    cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+location)
+    b_id=cass.get_business_id(food,location)
+    print b_id
+    #print cass.get_food_details(b_id)
 
 def search_query_2(restaurant,location):
-    print "\n===Query results 2 for restaurant : ",restaurant," and location : ",location,"==\n"
-
-    print "Making API call for google_places_kafka"
-    """
-    Make an API call here once you have the business id and name and location
-    """
+    cass.setLog("INFO","Query results 2 for restaurant : "+restaurant+" and location : "+location)
+    
+    b_id=cass.get_business_id(restaurant,location)
+    if b_id is None:
+        print {}
+    else:
+        result= cass.get_food_details(b_id)
+        print result	
+        cass.setLog("INFO", "Making API call for google_places_kafka")
 
 
 def get_top10_restaurant():

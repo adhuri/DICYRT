@@ -2,7 +2,7 @@ from pyspark import SparkConf, SparkContext
 import re
 import json
 import config
-import db
+import cass 
 
 sc = None
 words = None
@@ -37,7 +37,7 @@ def parse_json(review):
 def create_tuple(data):
     arr = data[0].split(" ");
     element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
-    db.save_element_in_db(element)
+    cass.insert_food_details(element,"Yelp")
     return element
 
 
