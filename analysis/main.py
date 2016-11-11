@@ -19,10 +19,10 @@ def search_query_2(restaurant,location):
     
     b_id=cass.get_business_id(restaurant,location)
     if b_id is None:
-        print {}
+        return {}
     else:
         result= cass.get_food_details(b_id)
-        print result	
+        return result	
         cass.setLog("INFO", "Making API call for google_places_kafka")
 
 
@@ -47,7 +47,7 @@ def get_top10_food():
     if (restaurant is not ''):
         location=raw_input("Enter Location where you have to search the restaurant : ")
         if location is not '':
-            search_query_2(restaurant,location)
+            print search_query_2(restaurant,location)
         else:
             print ("Invalid Location \nERROR: Exiting..")
         sys.exit()
