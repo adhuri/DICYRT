@@ -4,7 +4,28 @@ from flask import Markup
 from flask import Flask
 from flask import render_template
 app = Flask(__name__)
+
+@app.route("/searchrestaurant")
+def searchR():
+    return render_template('searchrestaurant.html')
+
+@app.route("/restaurant" , ,methods = [ 'GET'])
+def searchF():
+    if request.method == 'GET':
+        food = request.args.get('food')
+        city=request.args.get('city')
+    j={}
+    
+    
+    
+    return render_template('restaurant.html')
+
  
+@app.route("/searchfood")
+def searchF():
+    return render_template('searchfood.html')
+
+
 @app.route("/food",methods = [ 'GET'])
 def chart():
     """{'business_id': u'jRPtR43eLXJmnr9Mw_deMg', 'food_list': [(u'sandwich', 15), (u'fish', 3), (u'chicken', 2)]}"""
@@ -13,8 +34,8 @@ def chart():
 
     if request.method == 'GET':
     	restaurant = request.args.get('name')
-	city=request.args.get('city')
-    	j={}
+    	city=request.args.get('city')
+    j={}
 	j=main.search_query_2(restaurant,city)
 	if bool(j):
 		title="Food at "+ restaurant
