@@ -9,8 +9,8 @@ app = Flask(__name__)
 def searchR():
     return render_template('searchrestaurant.html')
 
-@app.route("/restaurant" , ,methods = [ 'GET'])
-def searchF():
+@app.route("/restaurant" , methods = [ 'GET'])
+def searchrestaurant():
     if request.method == 'GET':
         food = request.args.get('food')
         city=request.args.get('city')
@@ -35,7 +35,7 @@ def chart():
     if request.method == 'GET':
     	restaurant = request.args.get('name')
     	city=request.args.get('city')
-    j={}
+    	j={}
 	j=main.search_query_2(restaurant,city)
 	if bool(j):
 		title="Food at "+ restaurant

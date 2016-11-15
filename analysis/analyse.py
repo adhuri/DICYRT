@@ -19,7 +19,8 @@ def extract_food_items(review):
 
 def load_wordlist(filename):
     text = sc.textFile(filename,4)
-    words = text.flatMap(lambda word: word.split("\n"))
+    #words = text.flatMap(lambda word: word.split("\n"))
+    words = text.flatMap(lambda word: word.split("\n")).map(lambda word: word.split(":")[0])
     return words.collect()
 
 
