@@ -25,7 +25,7 @@ def process(rd):
         rd = rd.map(parse_json)
         #rd.cache()
         businessid_food_count_list.append(rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect())
-        print 'Final result is '
+        print 'Result is '
         print businessid_food_count_list
 
 def stream(ssc, duration):
