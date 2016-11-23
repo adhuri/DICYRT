@@ -13,7 +13,7 @@ def main():
 	conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
 	sc = SparkContext(conf=conf)
 	ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
-	words = load_wordlist("/home/sagar/DICYRT/DICYRT/analysis/foodDictionaryFinal.txt")
+	words = load_wordlist(config.foodlist)
 	stream(ssc, 10)
 	words = load_wordlist(config.foodlist)
 	stream(ssc, 10)
