@@ -8,6 +8,7 @@ import config
 #import cass 
 sc = None
 words = None
+businessid_food_count_list = []
 
 def main():
     global sc, words
@@ -16,28 +17,34 @@ def main():
     ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
     words = load_wordlist(config.foodlist)
     reviews = stream(ssc, 10)
-    for r in reviews:
-        if len(r) > 0:
-            rd = sc.parallelize(r)
-            process(rd)
+    #for r in reviews:
+        #if len(r) > 0:
+            #rd = sc.parallelize(r)
+            #process(rd)
 
 def process(rd):
     #print rd.collect()
-    #if rd.isEmpty:
-        #print 'INFO: Empty rdd'
+    empty = rd.isEmpty()
+    print empty
+    if empty:
+        print 'INFO: Empty rdd'
         #return
-    #else:
-    rd = rd.map(parse_json)
-    rd.cache()
-    businessid_food_count_list = rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect()
-    print businessid_food_count_list
+    else:
+        #print 'Not empty'
+        rd = rd.map(parse_json)
+        #rd.cache()
+        #print rd.collect()
+        print 'Final result is '
+        businessid_food_count_list.append(rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect())
+        print 'Final result is '
+        print businessid_food_count_list
 
 def stream(ssc, duration):
     reviews = []
     kafkaStream = KafkaUtils.createDirectStream(ssc,['google_places'],kafkaParams = {"metadata.broker.list": '152.46.16.173:9092', 'auto.offset.reset': 'smallest'})
     objstream = kafkaStream.map(lambda x: x[1])
-    objstream.foreachRDD(lambda rdd: reviews.append(rdd.collect()))
-    #objstream.foreachRDD(lambda rd: process(rd))
+    #objstream.foreachRDD(lambda rdd: reviews.append(rdd.collect()))
+    objstream.foreachRDD(process)
     ssc.start()
 	#ssc.awaitTermination()
     ssc.awaitTerminationOrTimeout(duration)
@@ -65,6 +72,9 @@ def load_reviews(filename):
 
 
 def parse_json(review):
+    #print review
+    print 'Parsing json'
+    #print review
     review = json.loads(review)
     return {'business_id': review['business_id'], 'text': review['text']}
 
