@@ -12,7 +12,7 @@ def create_list_for_kafka(business_id,name,location):
 	js= get_place_details(p)
 	lists=[]
 	for i in js['reviews']:
-		 i['business.id']=business_id
+		 i['business_id']=business_id
 		 lists.append(i)	
 	return lists
 
