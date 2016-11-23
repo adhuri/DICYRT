@@ -2,6 +2,7 @@ from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 import json
+import analyse
 sc = None
 
 def main():
@@ -15,8 +16,10 @@ def main():
     ssc.awaitTermination()  	
 
 def pprint(x):
-	print x.collect()
-
+    print x.collect()
+    #analysis to be done on this rdd
+    #analyse.perform_analysis(x)
+    
 if __name__=="__main__":
     main()
 

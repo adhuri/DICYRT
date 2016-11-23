@@ -41,6 +41,10 @@ def create_tuple(data):
     cass.insert_food_details(element,"Yelp")
     return element
 
+#def perform_analysis(reviews):
+#    businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
+                                 .map(create_tuple).collect()
+#    print businessid_food_count_list[0:10]
 
 def main():
     global sc, words
@@ -51,6 +55,7 @@ def main():
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
     reviews.cache()
+    perform_analysis(reviews)
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
                                  .map(create_tuple).collect()
     #print businessid_food_count.collect()[0:10]
