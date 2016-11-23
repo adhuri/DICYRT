@@ -14,11 +14,8 @@ def main():
 	sc = SparkContext(conf=conf)
 	ssc = StreamingContext(sc, 10)   # Create a streaming context with batch interval of 10 sec
 	words = load_wordlist("/home/sagar/DICYRT/DICYRT/analysis/foodDictionaryFinal.txt")
-	#reviews = stream(ssc, 10)
-	# for r in reviews:
-	# 	if len(r) > 0:
-	# 		rd = sc.parallelize(r)
-	# 		process(rd)
+	stream(ssc, 10)
+	words = load_wordlist(config.foodlist)
 	stream(ssc, 10)
 
 def process(rd):
@@ -34,11 +31,11 @@ def stream(ssc, duration):
 	objstream = kafkaStream.map(lambda x: x[1])
 	objstream.foreachRDD(lambda rdd: reviews.append(rdd.collect()))
 	objstream.foreachRDD(lambda rdd: process(rdd))
+
 	ssc.start()
 	#ssc.awaitTermination()
 	ssc.awaitTerminationOrTimeout(duration)
 	ssc.stop(stopGraceFully=True) 	
-	#return reviews
 
 def extract_food_items(review):
 	food_items = []
