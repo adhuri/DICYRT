@@ -12,6 +12,14 @@ def search_query_1(food,location):
     cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+location)
     b_id=cass.get_business_id(food,location)
     print b_id
+    #### Write to file in this format: 
+    '''
+        {"restaurants":[
+            {"name": _____, lat: _____, lng: _____},
+            {"name": _____, lat: _____, lng: _____},
+            ......
+        ]}
+    '''
     #print cass.get_food_details(b_id)
 
 def search_query_2(restaurant,location):
