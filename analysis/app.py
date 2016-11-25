@@ -44,5 +44,7 @@ def chart():
     		return render_template('food.html', title=title,labels=labels)
 	#else: return error 
 
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)

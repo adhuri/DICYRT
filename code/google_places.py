@@ -37,7 +37,10 @@ def get_place_details(place):
 	return mydict
 
 if __name__=='__main__':
-	p = get_place('RockysLounge','40.3964688,-80.0849416')
+	#p = get_place('RockysLounge','40.3964688,-80.0849416')
+	#main('ASifDajshf','Arizona Pizza Company','33.65379,-112.23381')
+	p = get_place('Fatburger','33.42596,-111.94025')
+	#p = get_place('Hummus Xpress','33.4078,-111.95375')
 	print get_place_details(p)
 
 

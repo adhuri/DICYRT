@@ -83,3 +83,8 @@ Natto:japanese
 Onigiri:japanese
 Curry Rice:japanese
 Udon:japanese
+eggplant:middle eastern
+chicken:all
+Hamburger:american
+fries:american
+shakes:all

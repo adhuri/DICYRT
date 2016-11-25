@@ -33,6 +33,7 @@ def search_query_2(restaurant,location):
         return result	
         cass.setLog("INFO", "Making API call for google_places_kafka")
 
+def 
 
 def get_top10_restaurant():
     foodList= getFoodlist()
