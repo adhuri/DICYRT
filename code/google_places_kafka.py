@@ -29,4 +29,4 @@ def main(business_id, restaurant_name, location):
 		print ("Exception in sending to Kafka \n Check if Kafka Cluster working")
 
 if __name__=="__main__":
-	main('ASidDajshf','RockysLounge','40.3964688,-80.0849416')
+	main('ASidDajshf','Arizona Pizza Company','33.65379,-112.23381')
