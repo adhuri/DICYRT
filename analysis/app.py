@@ -20,6 +20,9 @@ def searchrestaurant():
     
     return render_template('restaurant.html')
 
+@app.route("/maps")
+def searchMaps():
+    return render_template('map.html')
  
 @app.route("/searchfood")
 def searchF():
