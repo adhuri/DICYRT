@@ -22,7 +22,10 @@ def searchrestaurant():
 
 @app.route("/maps")
 def searchMaps():
-    return render_template('map.html')
+    restaurant_data = {"restaurants":[
+    {"restName":"London Eye, London", "lat": 51.503454, "lng": -0.119562, "address": "Address1", "rating" : 4},
+    {"restName":"Palace of Westminster, London", "lat": 51.499633, "lng": -0.124755, "address": "Address2", "rating" : 5}]};
+    return render_template('map.html', restaurant_data=restaurant_data)
  
 @app.route("/searchfood")
 def searchF():

@@ -10,9 +10,9 @@ def getFoodlist():
 
 def search_query_1(food,location):
     cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+location)
-    b_id=cass.get_business_id(food,location)
-    print b_id
-    #### Write to restaurantDetails.json file in this format: 
+    #b_id=cass.get_business_id(food,location)
+    #print b_id
+    #### data
     '''
         {"restaurants":[
             {"name": _____, lat: _____, lng: _____},

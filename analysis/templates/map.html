@@ -31,11 +31,12 @@ function initMap() {
     //$.get('restaurantDetails.json', function(data) {
 
 
-    data = {"restaurants":[
+    /*data = {"restaurants":[
     {"restName":"London Eye, London", "lat": 51.503454, "lng": -0.119562, "address": "Address1", "rating" : 4},
     {"restName":"Palace of Westminster, London", "lat": 51.499633, "lng": -0.124755, "address": "Address2", "rating" : 5}
-]}; 
+]}; */
 	
+	data = {{restaurant_data|safe}};
     var infoWindowContent = [];
 	var markers = data.restaurants
 	for(i=0;i<markers.length;i++)
