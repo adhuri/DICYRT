@@ -22,11 +22,21 @@ def searchrestaurant():
 
 @app.route("/maps")
 def searchMaps():
+    #  restaurant_data = {"restaurants":[
+    # {"restName":"London Eye, London", "lat": 51.503454, "lng": -0.119562, "address": "Address1", "rating" : 4},
+    # {"restName":"Palace of Westminster, London", "lat": 51.499633, "lng": -0.124755, "address": "Address2", "rating" : 5}]};
     restaurant_data = {"restaurants":[
-    {"restName":"London Eye, London", "lat": 51.503454, "lng": -0.119562, "address": "Address1", "rating" : 4},
-    {"restName":"Palace of Westminster, London", "lat": 51.499633, "lng": -0.124755, "address": "Address2", "rating" : 5}]};
+    {"restName":"Senor Taco", "lat": 33.45221, "lng": -112.39201, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.46238, "lng": -112.36042, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.4627, "lng": -112.34153, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.46434, "lng": -112.39023, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.46177, "lng": -112.34428, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.36024, "lng": -112.4053, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.41045, "lng": -112.39265, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.46379, "lng": -112.34559, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Senor Taco", "lat": 33.45223, "lng": -112.39167, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
+    {"restName":"Palace of Westminster, London", "lat": 33.43654 , "lng": -112.42171, "address": "Address2", "rating" : 5}]};
     return render_template('map.html', restaurant_data=restaurant_data)
- 
 @app.route("/searchfood")
 def searchF():
     return render_template('searchfood.html')

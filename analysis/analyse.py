@@ -45,19 +45,19 @@ def create_tuple(data):
 
 #def perform_analysis(reviews):
 #    businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
-                                 .map(create_tuple).collect()
+#                                 .map(create_tuple).collect()
 #    print businessid_food_count_list[0:10]
 
 def main():
     global sc, words
-    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    #conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    #conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
     sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py'])
     words = load_wordlist(config.foodlist)
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
     reviews.cache()
-    perform_analysis(reviews)
+    #perform_analysis(reviews)
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
                                  .map(create_tuple).collect()
     #print businessid_food_count.collect()[0:10]
