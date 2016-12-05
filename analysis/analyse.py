@@ -50,12 +50,13 @@ def create_tuple(data):
 
 def main():
     global sc, words
-    #conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    #conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
     sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py'])
     words = load_wordlist(config.foodlist)
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(parse_json)
+    reviews = reviews.filter(lambda r: r['stars'] > config.threshold)
     reviews.cache()
     #perform_analysis(reviews)
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
