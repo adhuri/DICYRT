@@ -10,6 +10,7 @@ cluster = Cluster(
 	)
 session = cluster.connect('aniket')
 
+producer = KafkaProducer(bootstrap_servers='152.46.16.173:9092',value_serializer=lambda v: v.encode('utf-8'))
 
 def get_food_details(b_id,top=10):
 	global session
@@ -94,8 +95,16 @@ def setLog(type_of_log,string):
 	#with open("db_failure_logs.txt", "a") as myfile:
 	ts = time.time()
 	ts=datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    		#myfile.write("["+ts+"] : ["+type_of_log +"] :"+string+"\n")
-    	print ("["+ts+"] : ["+type_of_log +"] :"+string+"\n")
+	#myfile.write("["+ts+"] : ["+type_of_log +"] :"+string+"\n")
+	m = "[" + ts + "] : [" + type_of_log + "] :" + string
+	try:
+		print ("Sending :", m)
+		if type_of_log == 'logs': producer.send('logs', m)
+		if type_of_log == 'debug': producer.send('debug', m)
+		print ("\nSent")			
+	except:
+		print ("Exception in sending to Kafka \n Check if Kafka Cluster working")
+    #print ("["+ts+"] : ["+type_of_log +"] :"+string+"\n")
 	#"""
 	
 if __name__=='__main__':

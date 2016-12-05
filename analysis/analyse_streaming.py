@@ -24,6 +24,7 @@ def process(rd):
     empty = rd.isEmpty()
     if not empty:
         rd = rd.map(parse_json)
+        rd = rd.filter(lambda r: r['rating'] > config.threshold)
         #rd.cache()
         businessid_food_count_list.append(rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect())
         # print 'Result is '
