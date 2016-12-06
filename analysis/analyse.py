@@ -30,9 +30,12 @@ def load_reviews(filename):
     text = sc.textFile(filename,4)
     return text
 
+def convert_json(review):
+    review = json.loads(review)
+    return review
 
 def parse_json(review):
-    review = json.loads(review)
+    #review = json.loads(review)
     return {'business_id': review['business_id'], 'text': review['text']}
 
 
@@ -55,8 +58,9 @@ def main():
     sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py'])
     words = load_wordlist(config.foodlist)
     reviews = load_reviews(config.reviewlist)
+    reviews = reviews.map(convert_json)
+    reviews = reviews.filter(lambda r: int(r['stars']) >= config.threshold)
     reviews = reviews.map(parse_json)
-    reviews = reviews.filter(lambda r: r['stars'] > config.threshold)
     reviews.cache()
     #perform_analysis(reviews)
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\

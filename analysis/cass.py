@@ -4,6 +4,7 @@ import datetime,time
 from cassandra import ConsistencyLevel
 from cassandra.query import SimpleStatement
 import config,json
+from kafka import KafkaProducer
 
 cluster = Cluster(
 	contact_points=['152.46.19.234'],

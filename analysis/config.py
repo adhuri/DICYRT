@@ -15,4 +15,4 @@ foodlist='/home/adhuri/DICYRT/analysis/foodDictionaryFinal.txt'
 #reviewlist='/home/adhuri/DICYRT/data/yelp_academic_dataset_review_part.json'
 reviewlist='/home/adhuri/DICYRT/data/yelp_academic_dataset_review.json'
 
-threshold = 3
+threshold = 5

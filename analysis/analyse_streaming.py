@@ -23,9 +23,10 @@ def main():
 def process(rd):
     empty = rd.isEmpty()
     if not empty:
+        rd = rd.map(convert_json)
+        rd = rd.filter(lambda r: int(r['rating']) >= config.threshold)
         rd = rd.map(parse_json)
-        rd = rd.filter(lambda r: r['rating'] > config.threshold)
-        #rd.cache()
+	#rd.cache()
         businessid_food_count_list.append(rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect())
         # print 'Result is '
         # print businessid_food_count_list
@@ -56,13 +57,12 @@ def load_wordlist(filename):
     return words.collect()
 
 
-def load_reviews(filename):
-    text = sc.textFile(filename,4)
-    return text
-
+def convert_json(review):
+    review = json.loads(review)
+    return review
 
 def parse_json(review):
-    review = json.loads(review)
+    #review = json.loads(review)
     return {'business_id': review['business_id'], 'text': review['text']}
 
 
