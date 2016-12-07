@@ -92,6 +92,8 @@ def insert_business_details(business_list):
 		setLog("ERROR", " Failed inserting into business_details : " +str(e))
 
 def setLog(type_of_log,string):
+        if type_of_log == "INFO":
+         type_of_log = 'logs'
 	"""Print DB Failures"""
 	#with open("db_failure_logs.txt", "a") as myfile:
 	ts = time.time()
