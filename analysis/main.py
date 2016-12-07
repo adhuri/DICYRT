@@ -8,8 +8,8 @@ def getFoodlist():
         lines = f.read().splitlines()
     return lines
 
-def search_query_1(food,location):
-    cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+location)
+def search_query_1(food, city):
+    cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+city)
     #b_id=cass.get_business_id(food,location)
     #print b_id
     #### data
@@ -20,7 +20,7 @@ def search_query_1(food,location):
             ......
         ]}
     '''
-    #print cass.get_food_details(b_id)
+    return cass.get_top_restaurants(food, city)
 
 def search_query_2(restaurant,location):
     cass.setLog("INFO","Query results 2 for restaurant : "+restaurant+" and location : "+location)

@@ -2,7 +2,7 @@ from cassandra.cluster import Cluster
 import operator
 import datetime,time
 from cassandra import ConsistencyLevel
-from cassandra.query import SimpleStatement
+from cassandra.query import SimpleStatement, dict_factory, named_tuple_factory
 import config,json
 from kafka import KafkaProducer
 
@@ -34,6 +34,41 @@ def getDict(b_id,results,top):
 	dic2['food_list'] = sorted_x[:top]
 	dic2['business_id'] = b_id
 	return dic2
+
+def get_foodcounts(food, business_id):
+       try:
+           get_foodcounts_prepared = session.prepare("select count from food_details where business_id=? and food=?")
+           result = session.execute(get_foodcounts_prepared, (business_id, food))
+           return result[0].count
+       except Exception as e:
+           return 0
+           #print e
+           #setLog("ERROR","Failed to get count for business id " + str(business_id) + " and food " + str(food))
+
+def get_business_details(city): 
+        try:
+            get_business_details_prepared = session.prepare("select name, business_id, full_address, latitude, longitude, stars from business_details where city=?")
+            session.row_factory = dict_factory
+            results = session.execute(get_business_details_prepared, [city])
+            session.row_factory = named_tuple_factory
+            return [i for i in results]
+        except Exception as e:
+             print e
+             setLog("ERROR","Failed to get business details for city " + str(city))
+            
+def get_top_restaurants(food, city):
+        limit = 10
+        business_details = get_business_details(city)
+        top_restaurants = []
+        for business in business_details:
+            count = int(get_foodcounts(food, str(business['business_id'])))
+            if count > 0:
+                business['count'] = count
+                #print business
+                top_restaurants.append(business)
+        top_restaurants = sorted(top_restaurants, key=lambda restaurant: restaurant['count'], reverse=True)
+        return top_restaurants[:limit] 
+            
 
 def insert_food_details(element,source):
 	try:	
@@ -117,4 +152,6 @@ if __name__=='__main__':
 	
 	#insert_business_details(config.businesslist)
 
-	get_business_id("Bear Creek Golf Complex","Chandler")
+	#get_business_id("Bear Creek Golf Complex","Chandler")
+        #get_business_details('Goodyear')
+        get_top_restaurants('Tacos', 'Goodyear')
