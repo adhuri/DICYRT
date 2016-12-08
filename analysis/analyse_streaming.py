@@ -5,7 +5,8 @@ import re
 import json
 #import analyse
 import config
-import cass 
+import cass
+from setting_logs import set_log 
 sc = None
 words = None
 businessid_food_count_list = []
@@ -20,20 +21,18 @@ def main():
 	#stream(ssc, 10)
 	stream(ssc)
 
+
 def process(rd):
     empty = rd.isEmpty()
     if not empty:
         rd = rd.map(convert_json)
         rd = rd.filter(lambda r: int(r['rating']) >= config.threshold)
         rd = rd.map(parse_json)
-	#rd.cache()
         businessid_food_count_list.append(rd.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b).map(create_tuple).collect())
-        # print 'Result is '
-        # print businessid_food_count_list
+
 
 def stream(ssc):
 	kafkaStream = KafkaUtils.createDirectStream(ssc,['google_places'],kafkaParams = {"metadata.broker.list": '152.46.16.173:9092', 'auto.offset.reset': 'smallest'})
-    #objstream.foreachRDD(lambda rdd: reviews.append(rdd.collect()))
 	objstream = kafkaStream.map(lambda x: x[1])
 	objstream.foreachRDD(lambda rdd: process(rdd))
 
@@ -42,6 +41,7 @@ def stream(ssc):
 	#ssc.awaitTerminationOrTimeout(duration)
 	#ssc.stop(stopGraceFully=True) 	
 
+
 def extract_food_items(review):
     food_items = []
     for word in words:
@@ -49,6 +49,7 @@ def extract_food_items(review):
             business_id = review['business_id']
             food_items.append(business_id + " " + word)
     return food_items
+
 
 def load_wordlist(filename):
     text = sc.textFile(filename,4)
@@ -61,6 +62,7 @@ def convert_json(review):
     review = json.loads(review)
     return review
 
+
 def parse_json(review):
     #review = json.loads(review)
     return {'business_id': review['business_id'], 'text': review['text']}
@@ -71,8 +73,9 @@ def create_tuple(data):
     arr = data[0].split(" ");
     element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
     cass.insert_food_details(element,"Google")
-    print element
+    set_log("INFO", "debug", "The tuple is " + element)
     return element
+
 
 def filterSpecChars(inp):
 		#Following approach is inspired from a StackOverflow post

@@ -5,28 +5,34 @@ from flask import Flask
 from flask import render_template
 import ast
 import json
+from setting_logs import set_log
 app = Flask(__name__)
 
 @app.route("/searchrestaurant")
 def searchR():
     return render_template('searchrestaurant.html')
 
+@app.route("/")
+def display():
+    print 'Home page'
+    #return render_template('homepage.html')
+
+'''
 @app.route("/restaurant" , methods = [ 'GET'])
 def searchrestaurant():
     if request.method == 'GET':
         food = request.args.get('food')
         city=request.args.get('city')
-    j={}
-    
-    
-    
+    j={}    
     return render_template('restaurant.html')
+'''
 
 @app.route("/maps", methods = ['POST'])
 def searchMaps():
     if request.method == 'POST':
         food = request.form.get('food', type=str) 
         city = request.form.get('city', type=str)
+    set_log("INFO", "logs", "Search for top restaurants serving " + food + " in " + city)
     #  restaurant_data = {"restaurants":[
     # {"restName":"London Eye, London", "lat": 51.503454, "lng": -0.119562, "address": "Address1", "rating" : 4},
     # {"restName":"Palace of Westminster, London", "lat": 51.499633, "lng": -0.124755, "address": "Address2", "rating" : 5}]};
@@ -42,12 +48,12 @@ def searchMaps():
     {"restName":"Senor Taco", "lat": 33.45223, "lng": -112.39167, "address": "525 N Estrella Pkwy Ste 100 Goodyear, AZ 85338", "rating" : 3.5},
     {"restName":"Palace of Westminster, London", "lat": 33.43654 , "lng": -112.42171, "address": "Address2", "rating" : 5}]};
     data = main.search_query_1(food, city)
-    #print data
-    #transformed_data = {"restaurants" : [ast.literal_eval(str(i)) for i in data]}
     transformed_data = {"restaurants" : [ast.literal_eval(json.dumps(i)) for i in data]}
-    print transformed_data
-    #return render_template('map.html', restaurant_data=restaurant_data)
+    #print transformed_data
+    #set_log("INFO", "logs", "The top 10 restaurants for " + str(food) + " in " + str(city) + " are: " + str(transformed_data))
+    set_log("INFO", "debug", "The top 10 restaurants for " + str(food) + " in " + str(city) + " are: " + str(transformed_data))
     return render_template('map.html', restaurant_data=transformed_data)
+
 
 @app.route("/searchfood")
 def searchF():
@@ -62,17 +68,16 @@ def chart():
 
     if request.method == 'GET':
     	restaurant = request.args.get('name')
-    	city=request.args.get('city')
-    	j={}
-	j=main.search_query_2(restaurant,city)
+    	city = request.args.get('city')
+    	j = {}
+        set_log("INFO", "logs", "Searching for top food items in " + restaurant + " in " + city)
+	j = main.search_query_2(restaurant,city)
 	if bool(j):
-		title="Food at "+ restaurant
+		title = "Food at "+ restaurant
     		labels =  [list([x[0].encode('ascii','ignore'),x[1]]) for x in j['food_list']]
     		print labels
     		return render_template('food.html', title=title,labels=labels)
 	#else: return error 
-
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)

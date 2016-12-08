@@ -1,6 +1,8 @@
 import config
 import sys
 import cass
+from setting_logs import set_log
+
 
 def getFoodlist():
     lines=[]
@@ -8,30 +10,25 @@ def getFoodlist():
         lines = f.read().splitlines()
     return lines
 
+
 def search_query_1(food, city):
-    cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+city)
-    #b_id=cass.get_business_id(food,location)
-    #print b_id
-    #### data
-    '''
-        {"restaurants":[
-            {"name": _____, lat: _____, lng: _____},
-            {"name": _____, lat: _____, lng: _____},
-            ......
-        ]}
-    '''
+    #cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+city)
+    set_log("INFO", "debug", "Query results 1 for food : "+food+" and city : "+city)
     return cass.get_top_restaurants(food, city)
+
 
 def search_query_2(restaurant,location):
     cass.setLog("INFO","Query results 2 for restaurant : "+restaurant+" and location : "+location)
+    set_log("INFO", "debug", "Query results 2 for restaurant : "+restaurant+" and location : "+location)
     
-    b_id=cass.get_business_id(restaurant,location)
+    b_id = cass.get_business_id(restaurant,location)
     if b_id is None:
         return {}
     else:
         result= cass.get_food_details(b_id)
         return result	
-        cass.setLog("INFO", "Making API call for google_places_kafka")
+        #cass.setLog("INFO", "Making API call for google_places_kafka")
+        set_log("INFO", "logs", "Making API call for google_places_kafka")
 
 
 def get_top10_restaurant():
@@ -50,6 +47,7 @@ def get_top10_restaurant():
         print ( "Please Enter from the food list provided \nERROR: Exiting..")
         sys.exit()
 
+
 def get_top10_food():
     restaurant=raw_input("Enter Restaurant Name : ")
     if (restaurant is not ''):
@@ -62,8 +60,6 @@ def get_top10_food():
     else:
         print ( "Please Enter restaurant name \nERROR: Exiting..")
         sys.exit()
-
-
 
 
 

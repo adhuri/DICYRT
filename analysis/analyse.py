@@ -4,8 +4,9 @@ import json
 import sys
 #sys.path.append("/home/adhuri/DICYRT/analysis")
 import config
-import cass 
-
+import cass
+#import setting_logs
+from setting_logs import set_log
 sc = None
 words = None
 
@@ -43,14 +44,10 @@ def parse_json(review):
 def create_tuple(data):
     arr = data[0].split(" ");
     element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
-    print element
+    set_log("INFO", "debug", "The tuple is " + str(element))
     cass.insert_food_details(element,"Yelp")
     return element
 
-#def perform_analysis(reviews):
-#    businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
-#                                 .map(create_tuple).collect()
-#    print businessid_food_count_list[0:10]
 
 def main():
     global sc, words
@@ -63,13 +60,8 @@ def main():
     reviews = reviews.filter(lambda r: float(r['stars']) >= config.threshold)
     reviews = reviews.map(parse_json)
     reviews.cache()
-    #perform_analysis(reviews)
     businessid_food_count_list = reviews.flatMap(extract_food_items).map(lambda bid_fooditem: (bid_fooditem,1)).reduceByKey(lambda a,b : a + b)\
                                  .map(create_tuple).collect()
-    #print businessid_food_count.collect()[0:10]
-    #for element in businessid_food_count_list:
-    #save_in_db(element)
-    #db.save_in_db(businessid_food_count_list)
 
 def filterSpecChars(inp):
         #Following approach is inspired from a StackOverflow post

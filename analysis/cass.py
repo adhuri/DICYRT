@@ -5,6 +5,7 @@ from cassandra import ConsistencyLevel
 from cassandra.query import SimpleStatement, dict_factory, named_tuple_factory
 import config,json
 from kafka import KafkaProducer
+from setting_logs import set_log
 
 cluster = Cluster(
 	contact_points=['152.46.19.234'],
@@ -15,9 +16,10 @@ producer = KafkaProducer(bootstrap_servers='152.46.16.173:9092',value_serializer
 
 def get_food_details(b_id,top=10):
 	global session
-	setLog("INFO","Getting food_details for business_id = " + b_id +", count "+str(top))
+	#setLog("INFO","Getting food_details for business_id = " + b_id +", count "+str(top))
+	set_log("INFO", "logs", "Getting food_details for business_id = " + b_id +", count "+str(top))
 	get_result_prepared = session.prepare("select business_id,food,count from food_details where business_id=? ")
-	results= session.execute(get_result_prepared,[b_id])
+	results = session.execute(get_result_prepared,[b_id])
 	return getDict(b_id,results,top)
 
 
@@ -35,27 +37,37 @@ def getDict(b_id,results,top):
 	dic2['business_id'] = b_id
 	return dic2
 
+
 def get_foodcounts(food, business_id):
        try:
+           set_log("INFO", "logs", "Getting food_details for business_id = " + b_id +", count "+str(top))
            get_foodcounts_prepared = session.prepare("select count from food_details where business_id=? and food=?")
            result = session.execute(get_foodcounts_prepared, (business_id, food))
-           return result[0].count
+           count = result[0].count
+           set_log("INFO", "debug", "The count for " + business_id + " and " + food + " is " + count)
+           return count
        except Exception as e:
            return 0
            #print e
-           #setLog("ERROR","Failed to get count for business id " + str(business_id) + " and food " + str(food))
+           set_log("INFO", "debug", "Food" + food +"does not appear in the review for " + business_id)
+
 
 def get_business_details(city): 
         try:
+            set_log("INFO", "logs", "Getting business details for city " + str(city))
             get_business_details_prepared = session.prepare("select name, business_id, full_address, latitude, longitude, stars from business_details where city=?")
             session.row_factory = dict_factory
             results = session.execute(get_business_details_prepared, [city])
             session.row_factory = named_tuple_factory
-            return [i for i in results]
+            result_list = [i for i in results]
+            set_log("INFO", "debug", "The business details for city " + city + " are " + result_list)
+            return result_list
         except Exception as e:
              print e
-             setLog("ERROR","Failed to get business details for city " + str(city))
+			 #setLog("ERROR","Failed to get business details for city " + str(city))
+             set_log("ERROR", "debug", "Failed to get business details for city " + str(city))
             
+
 def get_top_restaurants(food, city):
         limit = 10
         business_details = get_business_details(city)
@@ -67,26 +79,32 @@ def get_top_restaurants(food, city):
                 #print business
                 top_restaurants.append(business)
         top_restaurants = sorted(top_restaurants, key=lambda restaurant: restaurant['count'], reverse=True)
+        l = len(top_restaurants)
+        if l < limit:
+            limit = l
         return top_restaurants[:limit] 
             
 
 def insert_food_details(element,source):
 	try:	
 		element['source']=source
-		setLog("INFO", " Inserting into food_details :" + str(element))
+		#setLog("INFO", " Inserting into food_details :" + str(element))
+		set_log("INFO", "logs", "Inserting into food_details :" + str(element))
 		session.execute(
 		"""
     		INSERT INTO food_details (business_id, food, count, source)
     		VALUES (%(business_id)s, %(food)s, %(count)s, %(source)s)
     		""",element)
 	except:
-		setLog("ERROR", " Failed inserting into food_details :" + str(element))
+		#setLog("ERROR", " Failed inserting into food_details :" + str(element))
+		set_log("ERROR", "debug", " Failed inserting into food_details :" + str(element))
 
 
 def get_business_id(name,city):
-	setLog("INFO","Getting  business_id for name : " + name +", city :  "+city)
+	#setLog("INFO","Getting  business_id for name : " + name +", city :  "+city)
+	set_log("INFO", "logs", "Getting  business_id for name : " + name +", city :  "+city)
 	get_businessid_prepared = session.prepare("select business_id from business_details where name=? and city=? ")
-        results = session.execute(get_businessid_prepared,(name,city))
+	results = session.execute(get_businessid_prepared,(name,city))
 	#print results[0]
 	try:
 		if results[0].business_id:
@@ -95,6 +113,7 @@ def get_business_id(name,city):
 			return None
 	except:
 		return None
+
 
 def insert_business_details(business_list):
 	try:	
@@ -119,12 +138,15 @@ def insert_business_details(business_list):
                 			INSERT INTO business_details (business_id,name,city,state,full_address,latitude,longitude,stars)
                 			VALUES (%(business_id)s, %(name)s, %(city)s, %(state)s , %(full_address)s, %(latitude)s, %(longitude)s,%(stars)s)
                 			""",mydict)
-        				setLog("INFO","Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
+        				#setLog("INFO","Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
+        				set_log("INFO", "logs", "Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
     			#setLog("INFO","Inserted "+str(count)+" number of businesses ")
 
 
 	except Exception as e:
-		setLog("ERROR", " Failed inserting into business_details : " +str(e))
+		#setLog("ERROR", " Failed inserting into business_details : " +str(e))
+		setLog("ERROR", "debug", " Failed inserting into business_details : " +str(e))
+
 
 def setLog(type_of_log,string):
         if type_of_log == "INFO":
@@ -144,6 +166,7 @@ def setLog(type_of_log,string):
 		print ("Exception in sending to Kafka \n Check if Kafka Cluster working")
     #print ("["+ts+"] : ["+type_of_log +"] :"+string+"\n")
 	#"""
+
 	
 if __name__=='__main__':
 	#print get_food_details('xyz')
@@ -154,4 +177,4 @@ if __name__=='__main__':
 
 	#get_business_id("Bear Creek Golf Complex","Chandler")
         #get_business_details('Goodyear')
-        get_top_restaurants('Tacos', 'Goodyear')
+    get_top_restaurants('Tacos', 'Goodyear')
