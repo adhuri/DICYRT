@@ -21,8 +21,9 @@ def set_log(type_of_log, topic, string):
     #log_msg = "[" + ts + "] : [" + type_of_log + "] :" + string
     log_msg = "[" + ts + "] : [" + type_of_log + "] :" + string
     try:
-        print ("Sending log :", log_msg)
+        #print ("Sending log :", log_msg)
         if topic == 'logs': producer.send('logs', log_msg)
         if topic == 'debug': producer.send('debug', log_msg)
     except:
         print ("Exception in sending to Kafka \n Check if Kafka Cluster working")
+    return

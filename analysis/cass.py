@@ -40,21 +40,25 @@ def getDict(b_id,results,top):
 
 def get_foodcounts(food, business_id):
        try:
-           set_log("INFO", "logs", "Getting food_details for business_id = " + b_id +", count "+str(top))
+           msg = "Getting food_details for business_id " + business_id + " and food " + food
+           set_log("INFO", "logs", msg)
+           #print "After set_log"
            get_foodcounts_prepared = session.prepare("select count from food_details where business_id=? and food=?")
            result = session.execute(get_foodcounts_prepared, (business_id, food))
-           count = result[0].count
-           set_log("INFO", "debug", "The count for " + business_id + " and " + food + " is " + count)
-           return count
+           food_count = result[0].count
+           #print food_count
+           #msg = "The count for " + business_id + " and " + food + " is " + food_count
+           set_log("INFO", "debug", msg)
        except Exception as e:
-           return 0
-           #print e
-           set_log("INFO", "debug", "Food" + food +"does not appear in the review for " + business_id)
-
+           food_count = 0
+           msg = "Food" + food +" does not appear in the review for " + business_id
+           #set_log("INFO", "debug", msg)
+       return food_count
 
 def get_business_details(city): 
         try:
             set_log("INFO", "logs", "Getting business details for city " + str(city))
+            #print "After set log in business details"
             get_business_details_prepared = session.prepare("select name, business_id, full_address, latitude, longitude, stars from business_details where city=?")
             session.row_factory = dict_factory
             results = session.execute(get_business_details_prepared, [city])
@@ -78,12 +82,15 @@ def get_top_restaurants(food, city):
             set_log("ERROR", "logs", "Could not get business details for " + str(city) + " and " + str(food))
             return []
         for business in business_details:
+            #print business
             count = int(get_foodcounts(food, str(business['business_id'])))
+            #print 'The count is ' + str(count)
             if count > 0:
                 business['count'] = count
                 #print business
                 top_restaurants.append(business)
         top_restaurants = sorted(top_restaurants, key=lambda restaurant: restaurant['count'], reverse=True)
+        print 'The top restaurants are: ' , repr(top_restaurants)
         l = len(top_restaurants)
         if l < limit:
             limit = l

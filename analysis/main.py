@@ -12,6 +12,8 @@ def getFoodlist():
 
 
 def search_query_1(food, city):
+    food = food.strip()
+    city = city.strip()
     #cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+city)
     set_log("INFO", "debug", "Query results 1 for food : "+food+" and city : "+city)
     return cass.get_top_restaurants(food, city)
