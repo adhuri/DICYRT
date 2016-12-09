@@ -60,7 +60,7 @@ def get_business_details(city):
             results = session.execute(get_business_details_prepared, [city])
             session.row_factory = named_tuple_factory
             result_list = [i for i in results]
-            set_log("INFO", "debug", "The business details for city " + city + " are " + result_list)
+            set_log("INFO", "debug", "The business details for city " + city + " are " + repr(result_list))
             return result_list
         except Exception as e:
              print e
@@ -71,7 +71,12 @@ def get_business_details(city):
 def get_top_restaurants(food, city):
         limit = 10
         business_details = get_business_details(city)
+        #print 'The business details are: ', repr(business_details)
+        #print len(business_details)
         top_restaurants = []
+        if len(business_details) == 0:
+            set_log("ERROR", "logs", "Could not get business details for " + str(city) + " and " + str(food))
+            return []
         for business in business_details:
             count = int(get_foodcounts(food, str(business['business_id'])))
             if count > 0:
