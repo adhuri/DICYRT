@@ -15,6 +15,7 @@ def getFoodlist():
 def search_query_1(food, city):
     food = food.strip()
     city = city.strip()
+    #print "The food and city are" + str(food) + " " + str(city)
     #cass.setLog("INFO","Query results 1 for food : "+food+" and city : "+city)
     set_log("INFO", "debug", "Query results 1 for food : "+food+" and city : "+city)
     return cass.get_top_restaurants(food, city)
@@ -76,18 +77,4 @@ def get_top10_food():
 
 
 if __name__=="__main__":
-    while (True):
-        print ("1.  Get Top 10 restaurants(R) for food(F) in a location (L)")
-        print ("2.  Get Top 10 food items (F) for Restaurant (R)")
-        print ("3.  Quit")
-
-        ins = int(raw_input("Please enter Option from above : "))
-        if (ins == 1):
-            get_top10_restaurant()
-        elif (ins == 2):
-            get_top10_food()
-        elif (ins == 3):
-            print "Thank You. \nExiting.."
-        else :
-            print "Enter Valid input"
-            continue
+    search_query_1('Tacos', 'Goodyear')

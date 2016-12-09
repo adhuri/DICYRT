@@ -104,10 +104,11 @@ def get_top_restaurants(food, city):
                 business['count'] = count
                 top_restaurants.append(business)
         top_restaurants = sorted(top_restaurants, key=lambda restaurant: restaurant['count'], reverse=True)
-        print 'The top restaurants are: ' , repr(top_restaurants)
+        #print 'The top restaurants are: ' , repr(top_restaurants)
         l = len(top_restaurants)
         if l < limit:
             limit = l
+        #print top_restaurants[:limit] 
         return top_restaurants[:limit] 
             
 
