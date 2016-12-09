@@ -73,7 +73,7 @@ def create_tuple(data):
     arr = data[0].split(" ");
     element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
     cass.insert_food_details(element,"Google")
-    set_log("INFO", "debug", "The tuple is " + element)
+    set_log("INFO", "debug", "The tuple is " + repr(element))
     return element
 
 

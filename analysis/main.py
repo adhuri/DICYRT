@@ -1,6 +1,7 @@
 import config
 import sys
 import cass
+from google_places_kafka import send_to_kafka
 from setting_logs import set_log
 
 
@@ -27,10 +28,19 @@ def search_query_2(restaurant,location):
     if b_id is None:
         return {}
     else:
-        result= cass.get_food_details(b_id)
+        result = cass.get_food_details(b_id)
+        #print "The results of search_query_2 are ", repr(result)
+        #'''
+        result_for_kafka = cass.get_business_details_for_kafka(result['business_id'])[0]
+        name = result_for_kafka['name']
+        lat = result_for_kafka['latitude']
+        lng = result_for_kafka['longitude']
+        lat_lng = str(lat) + ',' + str(lng)
+        send_to_kafka(b_id, name, lat_lng)
+        #'''        
+        set_log("INFO", "logs", "Making API call for google_places_kafka")
         return result	
         #cass.setLog("INFO", "Making API call for google_places_kafka")
-        set_log("INFO", "logs", "Making API call for google_places_kafka")
 
 
 def get_top10_restaurant():

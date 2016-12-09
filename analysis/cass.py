@@ -41,23 +41,23 @@ def getDict(b_id,results,top):
 def get_foodcounts(food, business_id):
        try:
            msg = "Getting food_details for business_id " + business_id + " and food " + food
-           set_log("INFO", "logs", msg)
+           set_log("INFO", "debug", msg)
            #print "After set_log"
            get_foodcounts_prepared = session.prepare("select count from food_details where business_id=? and food=?")
            result = session.execute(get_foodcounts_prepared, (business_id, food))
            food_count = result[0].count
            #print food_count
-           #msg = "The count for " + business_id + " and " + food + " is " + food_count
+           msg = "The count for " + business_id + " and " + food + " is " + food_count
            set_log("INFO", "debug", msg)
        except Exception as e:
            food_count = 0
            msg = "Food" + food +" does not appear in the review for " + business_id
-           #set_log("INFO", "debug", msg)
+           set_log("INFO", "debug", msg)
        return food_count
 
 def get_business_details(city): 
         try:
-            set_log("INFO", "logs", "Getting business details for city " + str(city))
+            set_log("INFO", "debug", "Getting business details for city " + str(city))
             #print "After set log in business details"
             get_business_details_prepared = session.prepare("select name, business_id, full_address, latitude, longitude, stars from business_details where city=?")
             session.row_factory = dict_factory
@@ -71,6 +71,16 @@ def get_business_details(city):
 			 #setLog("ERROR","Failed to get business details for city " + str(city))
              set_log("ERROR", "debug", "Failed to get business details for city " + str(city))
             
+
+def get_business_details_for_kafka(business_id):
+        business_id = business_id.strip()
+        get_business_details_prepared = session.prepare("select name, latitude, longitude from business_details where business_id=? ALLOW FILTERING")
+        session.row_factory = dict_factory
+        results = session.execute(get_business_details_prepared, [business_id])
+        session.row_factory = named_tuple_factory
+        result_list = [i for i in results]
+        return result_list
+
 
 def get_top_restaurants(food, city):
         limit = 10
