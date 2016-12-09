@@ -161,13 +161,13 @@ def insert_business_details(business_list):
                 			VALUES (%(business_id)s, %(name)s, %(city)s, %(state)s , %(full_address)s, %(latitude)s, %(longitude)s,%(stars)s)
                 			""",mydict)
         				#setLog("INFO","Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
-        				set_log("INFO", "logs", "Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
+        				set_log("INFO", "debug", "Insert Done : "+ mydict['business_id']+"\t"+mydict['name'])
     			#setLog("INFO","Inserted "+str(count)+" number of businesses ")
 
 
 	except Exception as e:
 		#setLog("ERROR", " Failed inserting into business_details : " +str(e))
-		setLog("ERROR", "debug", " Failed inserting into business_details : " +str(e))
+		setLog("ERROR", "logs", " Failed inserting into business_details : " +str(e))
 
 
 def setLog(type_of_log,string):

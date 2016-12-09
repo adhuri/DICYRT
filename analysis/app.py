@@ -80,4 +80,4 @@ def chart():
 	#else: return error 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=6001,debug=True)
+    app.run(host='0.0.0.0', port=6002,debug=True)
