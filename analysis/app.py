@@ -15,7 +15,7 @@ def searchR():
 @app.route("/")
 def display():
     print 'Home page'
-    #return render_template('homepage.html')
+    return render_template('main.html')
 
 '''
 @app.route("/restaurant" , methods = [ 'GET'])
