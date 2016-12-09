@@ -7,6 +7,8 @@ import config
 import cass
 #import setting_logs
 from setting_logs import set_log
+import socket
+
 sc = None
 words = None
 
@@ -44,19 +46,23 @@ def parse_json(review):
 def create_tuple(data):
     arr = data[0].split(" ");
     element = {'business_id': arr[0], 'food': arr[1], 'count': data[1]}
-    set_log("INFO", "debug", "The tuple is " + str(element))
+    set_log("INFO", "debug", "The tuple generate on  " +str(socket.gethostname()) + "is "+ str(element))
     cass.insert_food_details(element,"Yelp")
     return element
 
 
 def main():
     global sc, words
-    #conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py'])
+    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    #conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py','setting_logs.py'])
+    set_log("INFO", "logs", "Analysis.py Using Food Dictionary from  " + str(config.foodlist))
     words = load_wordlist(config.foodlist)
+ 
+    set_log("INFO", "logs", "Analysis.py Using Reviews from  " + str(config.reviewlist))
     reviews = load_reviews(config.reviewlist)
     reviews = reviews.map(convert_json)
+    set_log("INFO", "logs", "Analysis.py doing analysis on stars threshold  " + str(config.threshold))
     reviews = reviews.filter(lambda r: float(r['stars']) >= config.threshold)
     reviews = reviews.map(parse_json)
     reviews.cache()

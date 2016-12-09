@@ -7,12 +7,19 @@ import config,json
 from kafka import KafkaProducer
 from setting_logs import set_log
 
+import socket
+
 cluster = Cluster(
 	contact_points=['152.46.19.234'],
 	)
 session = cluster.connect('aniket')
 
-producer = KafkaProducer(bootstrap_servers='152.46.16.173:9092',value_serializer=lambda v: v.encode('utf-8'))
+try:
+	producer = KafkaProducer(bootstrap_servers='152.46.16.173:9092',value_serializer=lambda v: v.encode('utf-8'))
+except Exception as e:
+	#print "Cannot connect ", str(e) 
+	set_log("ERROR", "debug", "Retrying connect to Kafka from "+str(socket.gethostname()))
+
 
 def get_food_details(b_id,top=10):
 	global session
@@ -111,7 +118,7 @@ def insert_food_details(element,source):
 	try:	
 		element['source']=source
 		#setLog("INFO", " Inserting into food_details :" + str(element))
-		set_log("INFO", "logs", "Inserting into food_details :" + str(element))
+		set_log("INFO", "debug", "Inserting into food_details :" + str(element))
 		session.execute(
 		"""
     		INSERT INTO food_details (business_id, food, count, source)
@@ -119,7 +126,7 @@ def insert_food_details(element,source):
     		""",element)
 	except:
 		#setLog("ERROR", " Failed inserting into food_details :" + str(element))
-		set_log("ERROR", "debug", " Failed inserting into food_details :" + str(element))
+		set_log("ERROR", "logs", " Failed inserting into food_details :" + str(element))
 
 
 def get_business_id(name,city):
