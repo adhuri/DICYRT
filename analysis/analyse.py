@@ -53,8 +53,8 @@ def create_tuple(data):
 
 def main():
     global sc, words
-    conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
-    #conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    #conf = SparkConf().setMaster(config.spark['server']).setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
+    conf = SparkConf().setMaster('local[2]').setAppName(config.spark['appname']).set("spark.driver.maxResultSize", "0").set("spark.executor.heartbeatInterval","600")
     sc = SparkContext(conf=conf, pyFiles=['config.py','cass.py','setting_logs.py'])
     set_log("INFO", "logs", "Analysis.py Using Food Dictionary from  " + str(config.foodlist))
     words = load_wordlist(config.foodlist)
