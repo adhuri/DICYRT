@@ -82,5 +82,6 @@ def filterSpecChars(inp):
     return re.sub('[^A-Za-z0-9\s]', '', inp).lower()
 
 if __name__=="__main__":
+    set_log("INFO", "logs", "Started analyse_streaming.py") 
     main()
 

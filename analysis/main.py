@@ -30,7 +30,8 @@ def search_query_2(restaurant,location):
         return {}
     else:
         result = cass.get_food_details(b_id)
-        #print "The results of search_query_2 are ", repr(result)
+        msg = "The top foods for restaurant " + str(restaurant) + " are " + repr(result)
+        set_log("INFO", "logs", msg)
         #'''
         result_for_kafka = cass.get_business_details_for_kafka(result['business_id'])[0]
         name = result_for_kafka['name']
