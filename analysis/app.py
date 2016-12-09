@@ -6,7 +6,7 @@ from flask import render_template
 import ast
 import json
 from setting_logs import set_log
-app = Flask(__name__)
+app = Flask(__name__,static_folder ="static")
 
 @app.route("/searchrestaurant")
 def searchR():
@@ -80,4 +80,4 @@ def chart():
 	#else: return error 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=6001,debug=True)
