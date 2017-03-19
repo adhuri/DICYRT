@@ -18,7 +18,7 @@ restaurants based on Yelp reviews and Google Places reviews.
 
 ### Presentation
 
-[Link](tiny.cc/dicyrt)
+[Link](https://docs.google.com/presentation/d/1dhToOiOIPxASD2b3--Cr-OMi0saXR4FJSQFfA_e_-mk/edit#slide=id.g13c6f379f4_0_947)
 
 
 ### Instructions 
